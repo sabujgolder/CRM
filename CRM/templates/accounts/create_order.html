@@ -3,13 +3,53 @@
 {% load static %}
 {% block content %}
 <br>
-<br>
-<div class="d-flex justify-content-center">
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form|crispy}}
-    <input type="submit" name="submit" value="submit">
-  </form>
-</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h4 class="text-center">Create Order</h4><br>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% if formset %}
+            {{ formset.management_form }}
+            {% for form in formset %}
+              {{form}}
+              <hr>
+            {% endfor %}
+
+          {% else %}
+              {{form|crispy}}
+          {% endif %}
+          
+          <input type="submit" name="submit" value="submit">
+        </form>
+      </div>
+
+      <div class="col-md-6">
+
+          <h5 class="text-center">Last 5 Orders</h5><br>
+
+        <div class="card card-body">
+            <table class="table">
+              <tr>
+                <th>Product</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Image</th>
+              </tr>
+
+              {% for i in orders %}
+                <tr>
+                  <td>{{i.product.name}}</td>
+                  <td>{{i.date_created}}</td>
+                  <td>{{i.status}}</td>
+                  <td><img src="/media/{{i.product.image}}" width = '40px'></td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+      </div>
+
+    </div>
+  </div>
 
 {% endblock %}

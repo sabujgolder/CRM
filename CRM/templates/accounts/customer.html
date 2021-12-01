@@ -9,8 +9,8 @@
 		<div class="card card-body">
 			<h5>Customer:</h5>
 			<hr>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="">Update Customer</a>
-			<a class="btn btn-outline-danger  btn-sm btn-block" href="">Delete Customer</a>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_customer' customer_data.id %}">Update Customer</a>
+			<a class="btn btn-outline-danger  btn-sm btn-block" href="{% url 'create_bulk_order' customer_data.id %}">Delete Customer</a>
 
 		</div>
 	</div>
@@ -39,7 +39,7 @@
 	<div class="col">
 		<div class="card card-body">
 			<form method="get">
-
+				{{filter_orders.form}}
 		    <button class="btn btn-primary" type="submit">Search</button>
 		  </form>
 		</div>
@@ -47,7 +47,9 @@
 
 </div>
 <br>
-
+<!-- {% for product in all_products %}
+	{{product}}<br>
+{% endfor %} -->
 <div class="row">
 	<div class="col-md">
 		<div class="card card-body">
@@ -67,8 +69,8 @@
 						<td>{{order.product.category }}</td>
 						<td>{{order.date_created}}</td>
 						<td>{{order.status}}</td>
-						<td><a href="#">Update</a></td>
-						<td><a href="#">Remove</a></td>
+						<td><a class="btn btn-info btn-sm" href="#">Update</a></td>
+						<td><a class="btn btn-danger btn-sm" href="#">Remove</a></td>
 					</tr>
 				{% endfor %}
 			</table>

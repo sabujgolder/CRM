@@ -1,0 +1,47 @@
+{% extends "accounts/main.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <h4 class="text-center">Create Customer</h4>
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{form|crispy}}
+          <input type="submit" name="submit" value="submit">
+        </form>
+
+      </div>
+
+      <div class="col-md-7">
+
+          <h5 class="text-center">Last 5 Customer Accounts</h5><br>
+
+          <div class="card card-body">
+              <table class="table">
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Image</th>
+                </tr>
+
+                {% for i in customers %}
+                  <tr>
+                    <td><a href="{% url 'customers' i.id %}">{{i.name}}</a></td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.email}}</td>
+                    <td><img src="/media/{{i.image}}" width = '40px'></td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}

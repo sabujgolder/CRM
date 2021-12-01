@@ -1,0 +1,31 @@
+{% extends "accounts/main.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <h4 class="text-center">Update {{customer.name}}'s Account</h4>
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{form|crispy}}
+          <input type="submit" name="submit" value="submit">
+        </form>
+
+      </div>
+
+      <div class="col-md-7">
+
+          <h5 >{{customer.name}}'s Details</h5><br>
+
+          <img src="/media/{{ customer.image }}" width="400px">
+          <h6>Name:</h6> {{customer.name}}
+
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}
