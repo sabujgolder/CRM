@@ -1,11 +1,62 @@
 from django.shortcuts import render,redirect,HttpResponseRedirect
-from .models import *
-from .forms import order_form,customer_form
 from django.urls import reverse
+
+from .forms import order_form,customer_form,CreateUserForm
 from django.forms import inlineformset_factory
+
 from .filters import *
+from .models import *
+
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+
+
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+def login_user(request):
+
+	if request.method == "POST":
+		username = request.POST.get('username')
+		password =request.POST.get('password')
+
+		user = authenticate(request, username=username, password=password)
+
+		if user is not None:
+			login(request, user)
+			return redirect('home')
+			messages.info(request, 'Logged In Successfully !')
+		else:
+			messages.info(request, 'Username OR password is incorrect')
+
+
+	return render(request,'accounts/login.html')
+
+@login_required
+def logout_user(request):
+
+	logout(request)
+	return redirect('login')
+
+def register(request):
+	form = CreateUserForm()
+
+	if request.method == "POST":
+		user_form = CreateUserForm(request.POST)
+
+		if user_form.is_valid():
+			user_form.save()
+			user_name = user_form.cleaned_data.get('username')
+			messages.success(request, 'User Created' + user_name)
+			return redirect('login')
+
+
+	dict = {'form':form}
+	return render(request,'accounts/register.html',context=dict)
+
+@login_required
 def home(request):
 	all_orders = Order.objects.all()
 	all_customers = Customer.objects.all()
@@ -22,10 +73,12 @@ def home(request):
 
 	return render(request,'accounts/dashboard.html',context=dict)
 
+@login_required
 def products(request):
 	all_products = Product.objects.all()
 	return render(request,'accounts/products.html',{'products':all_products})
 
+@login_required
 def customer(request,pk):
 
 	customer_data = Customer.objects.get(id=pk)
@@ -46,6 +99,7 @@ def customer(request,pk):
 	'total_orders':total_orders,'filter_orders':filter_orders}
 	return render(request,'accounts/customer.html',context = dict)
 
+@login_required
 def create_order(request):
 
 	data_form = order_form()
@@ -61,6 +115,7 @@ def create_order(request):
 
 	return render(request,'accounts/create_order.html',context=dict)
 
+@login_required
 def create_bulk_order(request,pk):
 
 	OrderFormSet = inlineformset_factory(Customer,Order,fields=('product','status'))
@@ -82,7 +137,7 @@ def create_bulk_order(request,pk):
 
 	return render(request,'accounts/create_order.html',context=dict)
 
-
+@login_required
 def create_customer(request):
 
 	customer = Customer.objects.all()
@@ -97,12 +152,14 @@ def create_customer(request):
 	dict = {'form':customer_creation_form,'customers':customer}
 	return render(request,'accounts/create_customer.html',context=dict)
 
+@login_required
 def delete_order(request,pk):
 
 	order = Order.objects.get(id=pk)
 	order.delete()
 	return redirect('/')
 
+@login_required
 def update_order(request,pk):
 
 	order = Order.objects.get(id=pk)
@@ -116,6 +173,7 @@ def update_order(request,pk):
 	dict = {'form':data_form}
 	return render(request,'accounts/update_order.html',context=dict)
 
+@login_required
 def update_customer(request,pk):
 	customer = Customer.objects.get(id=pk)
 	customer_update_form = customer_form(instance=customer)
